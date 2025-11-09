@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat Application</title>
+  <!-- <link rel="stylesheet" href="style.css"> -->
+  <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+  <style>
+    .main-heading {
+      text-align: center;
+    }
+    body{
+      background-image: linear-gradient(to bottom right, #9a7d8a, #a5a5a5);
+    }
+    .container {
+      width: 100%;
+    }
+    input::placeholder{
+      background-image:linear-gradient(to bottom right, #9a7d8a, #a5a5a5) ;
+      color:rgb(97, 92, 92);
+    }
+    .chat-display {
+      height: 400px;
+      width: 90%;
+      border: 1px solid rgb(199, 199, 199);
+      margin-left: auto;
+      margin-right: auto;
+      margin: 15px;
+      border-radius: 7px;
+      box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+      padding: 7px;
+    }
+
+    .name-field,
+    .chat-field {
+      width: 90%;
+      border: 1px solid rgb(199, 199, 199);
+      margin-left: auto;
+      margin-right: auto;
+      margin: 15px;
+      border-radius: 7px;
+      padding: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    }
+
+    .name-field-box,
+    .chat-field-box {
+      border: none;
+      /* box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px; */
+    }
+
+    .name-submit,
+    .chat-submit {
+      border: 1px solid rgb(32, 30, 30);
+      background-color: rgb(37, 36, 36);
+      margin: 0px;
+      color: white;
+      border-radius: 5px;
+    }
+
+    .status-class {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 120px;
+    }
+
+    .indicator {
+      height: 20px;
+      width: 20px;
+      border-radius: 50%;
+      background-color: rgb(221, 0, 0);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="status-class">
+    <div class="indicator"></div>
+    <div class="status-message">Not Connected</div>
+  </div>
+  <div class="container">
+    <h1 class="main-heading">💬 Real-Time Chat Application</h1>
+    <div class="chat-display"></div>
+    <div class="name-field"> <input class="name-field-box" type="text" placeholder="Enter your nameee"> <button
+        class="name-submit">Submit</button> </div>
+    <div class="chat-field"> <input class="chat-field-box" type="text" placeholder="Enter your message ..."> <button
+        class="chat-submit">Send</button> </div>
+  </div>
+  <script> let stompClient = null; function setConnected(connected) {
+      const indicator = document.getElementsByClassName('indicator')[0];
+      const status = document.getElementsByClassName('status-message')[0];
+      if (connected) {
+        indicator.style.backgroundColor = 'green';
+        status.textContent = 'Connected';
+      }
+      else {
+        indicator.style.backgroundColor = 'red';
+        status.textContent = 'Not Connected';
+      }
+    }
+    function showMessage(messageBody) {
+      const chat = document.getElementsByClassName('chat-display')[0];
+      const messageElement = document.createElement('div');
+      messageElement.textContent = messageBody.sender + ': ' + messageBody.content;
+      chat.appendChild(messageElement);
+    }
+    function sendMessage() {
+      const sender = document.getElementsByClassName('name-field-box')[0].value;
+      const content = document.getElementsByClassName('chat-field-box')[0].value;
+      const message = {
+        sender: sender,
+        content: content
+      };
+      stompClient.send('/app/sendMessage', {}, JSON.stringify(message));
+      document.getElementsByClassName('chat-field-box')[0].value = '';
+    }
+    function connect() {
+      const socket = new SockJS('/chat');
+      stompClient = Stomp.over(socket);
+      stompClient.connect({}, function (frame) {
+        console.log('Connected: ' + frame);
+        setConnected(true);
+        stompClient.subscribe('/topic/messages', function (message) {
+          showMessage(JSON.parse(message.body));
+        });
+      });
+    }
+    window.onload = connect;
+    document.getElementsByClassName('chat-submit')[0].onclick = sendMessage;
+  </script>
+</body>
+
+</html>
