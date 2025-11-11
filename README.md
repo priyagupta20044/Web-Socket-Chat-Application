@@ -7,9 +7,24 @@ This project demonstrates bi-directional communication between the client and se
  
 **1️. Before Connection**  The user sees “Not Connected” indicator and disabled message input.
 
+![Before](app/src/main/resources/images/before.png)
+
 **2️. After Connection Established**  Status changes to “Connected”, message box enabled. 
 
+![After](app/src/main/resources/images/after.png)
+
 **3️. Real-Time Messaging**  Messages sent and received in real-time. 
+
+![m1](app/src/main/resources/images/m1.png)
+
+![m2](app/src/main/resources/images/m2.png)
+
+![m3](app/src/main/resources/images/m3.png)
+
+**4. Spring Application** The spring backend runs and launches frontend with the socket connection via stomp client
+
+![terminal](app/src/main/resources/images/terminal.png)
+
 
 ## Features
 
