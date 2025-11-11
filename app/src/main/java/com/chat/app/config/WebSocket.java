@@ -10,7 +10,7 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @Configuration
 public class WebSocket implements WebSocketMessageBrokerConfigurer {
     @Override public void registerStompEndpoints(StompEndpointRegistry registry){
-        registry.addEndpoint("/chat") .setAllowedOrigins("http://localhost:8080") .withSockJS(); 
+        registry.addEndpoint("/chat") .setAllowedOrigins("*") .withSockJS(); 
     }
 
     @Override public void configureMessageBroker(MessageBrokerRegistry registry){ // set message broker // whoever is subsribed to this "topic", they will get the message - sets up the message broker 
